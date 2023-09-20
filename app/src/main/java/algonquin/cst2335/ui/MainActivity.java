@@ -1,13 +1,13 @@
 package algonquin.cst2335.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
 import android.widget.Toast;
 
-import algonquin.cst2335.stau0055.databinding.ActivityMainBinding;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
 import algonquin.cst2335.data.MainViewModel;
+import algonquin.cst2335.stau0055.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
