@@ -52,12 +52,15 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                 });
 
-        variableBinding.textview.setText((CharSequence) model.editString);
+        variableBinding.textview.setText( model.editString.getValue());
         variableBinding.mybutton.setOnClickListener( vw ->
         {
             model.editString.postValue(variableBinding.myedittext.getText().toString());
-            variableBinding.textview.setText("Your edit text has: " + model.editString);
+           ;
         });
 
+        model.editString.observe(this, newString ->
+        {    variableBinding.textview.setText("Your edit text has: " + newString) ; }
+        );
     }
 }
