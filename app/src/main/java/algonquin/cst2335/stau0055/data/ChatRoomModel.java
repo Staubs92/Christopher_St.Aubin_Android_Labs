@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
 
+import algonquin.cst2335.stau0055.ChatMessage;
+
 public class ChatRoomModel extends ViewModel {
-    public MutableLiveData<ArrayList<String>> messages = new MutableLiveData< >();
+    public MutableLiveData<ArrayList<ChatMessage>> messages = new MutableLiveData<>(null);
 }
