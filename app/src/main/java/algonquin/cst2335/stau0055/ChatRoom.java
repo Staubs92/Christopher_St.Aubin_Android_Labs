@@ -41,7 +41,6 @@ public class ChatRoom extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         MessageDatabase db = Room.databaseBuilder(getApplicationContext(), MessageDatabase.class, "database-name")
-                .fallbackToDestructiveMigration()
                 .build();
         mDAO = db.cmDAO();
 
