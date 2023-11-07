@@ -4,6 +4,7 @@
     <color name="my_secondary">#1A83BC</color>
     <color name="my_statusbar">#CFDA2B</color>
     <color name="my_text">#ED0A0A</color>
+    <color name="purple_200">#9C27B0</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
