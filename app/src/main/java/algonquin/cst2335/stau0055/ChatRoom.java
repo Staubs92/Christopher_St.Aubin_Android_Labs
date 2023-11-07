@@ -74,6 +74,44 @@ public class ChatRoom extends AppCompatActivity {
 
                 messageText = theRootConstraintLayout.findViewById(R.id.message);
                 timeText = theRootConstraintLayout.findViewById(R.id.time);
+                theRootConstraintLayout.setOnClickListener(clk -> {
+                    int position = getAbsoluteAdapterPosition();
+                    ChatMessage selected = messages.get(position);
+
+                    chatModel.selectedMessage.postValue(selected);
+
+                ChatMessage removedMessage = chatMessage;
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(ChatRoom.this);
+                builder.setMessage("Do you want to delete this message: " + messageText.getText())
+                        .setTitle("Question:")
+                        .setNegativeButton("No", (dialog, cl) -> {
+                        })
+                        .setPositiveButton("Yes", (dialog, cl) -> {
+                            messages.remove(position);
+                            myAdapter.notifyItemRemoved(position);
+
+
+                            Executor thread1 = Executors.newSingleThreadExecutor();
+                            thread1.execute(() -> {
+
+                                mDAO.deleteMessage(chatMessage);
+
+                            });
+
+
+                            Snackbar.make(messageText, "You deleted message #" + position, Snackbar.LENGTH_LONG)
+                                    .setAction("undo", clk2 -> {
+                                        Executor thread2 = Executors.newSingleThreadExecutor();
+                                        thread2.execute(() -> {
+                                            mDAO.insertMessage(removedMessage); });
+
+                                            messages.add(position, removedMessage);
+                                            myAdapter.notifyItemInserted(position);
+
+                                    }).show();
+                        }).create().show();
 
 
             }
@@ -114,5 +152,5 @@ public class ChatRoom extends AppCompatActivity {
                 return message.isSentButton() ? 0 : 1;
             }
 
-        });
-    }}
+        };
+    }}}

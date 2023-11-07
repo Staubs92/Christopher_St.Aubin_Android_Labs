@@ -7,9 +7,8 @@ import androidx.room.Query;
 
 import java.util.List;
 
+@Dao
 public interface ChatMessageDAO {
-    @Dao
-    public interface ChatMessageDAO {
 
         @Insert
         long insertMessage(ChatMessage m);
