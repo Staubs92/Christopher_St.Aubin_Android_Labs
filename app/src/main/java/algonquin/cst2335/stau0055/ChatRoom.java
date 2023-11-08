@@ -50,7 +50,8 @@ public class ChatRoom extends AppCompatActivity {
 
         messages = chatModel.messages.getValue();
         if (messages == null)
-            chatModel.messages.postValue(messages = new ArrayList<ChatMessage>());
+            chatModel.messages.postValue(messages = new ArrayList<>());
+
 
         Executor thread = Executors.newSingleThreadExecutor();
         thread.execute(() ->
