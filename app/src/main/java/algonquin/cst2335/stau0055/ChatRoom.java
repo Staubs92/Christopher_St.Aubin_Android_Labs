@@ -172,6 +172,9 @@ public class ChatRoom extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        ChatMessage chatMessage = messages.get(position);
+        messages messageText = binding.getRoot();
+        int position = getAbsoluteAdapterPosition();
 
         switch(item.getItemId())
         {
@@ -218,8 +221,6 @@ public class ChatRoom extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 
 
 
