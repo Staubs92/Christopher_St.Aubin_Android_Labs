@@ -17,12 +17,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ import java.util.concurrent.Executors;
 
 public class ChatRoom extends AppCompatActivity {
 
+
     ActivityChatRoomBinding binding;
     ArrayList<ChatMessage> messages;
     ChatRoomModel chatModel ;
@@ -40,6 +43,8 @@ public class ChatRoom extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
 
         chatModel = new ViewModelProvider(this).get(ChatRoomModel.class);
 
@@ -59,7 +64,6 @@ public class ChatRoom extends AppCompatActivity {
 
 
         binding = ActivityChatRoomBinding.inflate(getLayoutInflater());
-//        chatModel = new ViewModelProvider(this).get(ChatRoomModel.class);
 
         messages = chatModel.messages.getValue();
         if(messages == null)
@@ -74,6 +78,8 @@ public class ChatRoom extends AppCompatActivity {
                 });
 
         setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.toolbar);
 
         binding.sendButton.setOnClickListener(clk -> {
 
@@ -129,7 +135,8 @@ public class ChatRoom extends AppCompatActivity {
             else {
                 ReceiveMessageBinding binding = ReceiveMessageBinding.inflate(getLayoutInflater(), parent, false);
                 return new MyRowHolder(binding.getRoot());
-            } }
+                }
+            }
 
             @Override
             public void onBindViewHolder(@NonNull MyRowHolder holder, int position) {
@@ -149,9 +156,69 @@ public class ChatRoom extends AppCompatActivity {
                 ChatMessage message = messages.get(position);
                 return message.isSentButton() ? 0 : 1;
             }
-
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        getMenuInflater().inflate(R.menu.my_menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch(item.getItemId())
+        {
+            case R.id.item_1:
+
+                ChatMessage removedMessage = chatMessage;
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(ChatRoom.this);
+                builder.setMessage("Do you want to delete this message: " + messageText.getText())
+                        .setTitle("Question:")
+                        .setNegativeButton("No", (dialog, cl) -> {
+                        })
+                        .setPositiveButton("Yes", (dialog, cl) -> {
+                            messages.remove(position);
+                            myAdapter.notifyItemRemoved(position);
+
+
+                            Executor thread1 = Executors.newSingleThreadExecutor();
+                            thread1.execute(() -> {
+
+                                mDAO.deleteMessage(chatMessage);
+
+                            });
+
+
+                            Snackbar.make(messageText, "You deleted message #" + position, Snackbar.LENGTH_LONG)
+                                    .setAction("undo", clk2 -> {
+                                        Executor thread2 = Executors.newSingleThreadExecutor();
+                                        thread2.execute(() -> {
+                                            mDAO.insertMessage(removedMessage); });
+
+                                        messages.add(position, removedMessage);
+                                        myAdapter.notifyItemInserted(position);
+
+                                    }).show();
+                        }).create().show();
+                return true;
+
+            case R.id.item_2:
+                Toast.makeText(this, "Version 1.0, created by Christopher St.Aubin", Toast.LENGTH_SHORT).show();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
 
 
     class MyRowHolder extends RecyclerView.ViewHolder {
@@ -170,45 +237,7 @@ public class ChatRoom extends AppCompatActivity {
                 ChatMessage selected = messages.get(position);
 
                 chatModel.selectedMessage.postValue(selected);
-
-
-//                ChatMessage removedMessage = chatMessage;
-//
-//
-//                AlertDialog.Builder builder = new AlertDialog.Builder(ChatRoom.this);
-//                builder.setMessage("Do you want to delete this message: " + messageText.getText())
-//                        .setTitle("Question:")
-//                        .setNegativeButton("No", (dialog, cl) -> {
-//                        })
-//                        .setPositiveButton("Yes", (dialog, cl) -> {
-//                            messages.remove(position);
-//                            myAdapter.notifyItemRemoved(position);
-//
-//
-//                            Executor thread1 = Executors.newSingleThreadExecutor();
-//                            thread1.execute(() -> {
-//
-//                                mDAO.deleteMessage(chatMessage);
-//
-//                            });
-//
-//
-//                            Snackbar.make(messageText, "You deleted message #" + position, Snackbar.LENGTH_LONG)
-//                                    .setAction("undo", clk2 -> {
-//                                        Executor thread2 = Executors.newSingleThreadExecutor();
-//                                        thread2.execute(() -> {
-//                                            mDAO.insertMessage(removedMessage); });
-//
-//                                            messages.add(position, removedMessage);
-//                                            myAdapter.notifyItemInserted(position);
-//
-//                                    }).show();
-//                        }).create().show();
-
-
-
             });
-
         }
-        ;}
+    }
 }

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import algonquin.cst2335.stau0055.databinding.DetailsLayoutBinding;
 
 
+
 public class MessageDetailsFragment extends Fragment {
 
     ChatMessage selected;
