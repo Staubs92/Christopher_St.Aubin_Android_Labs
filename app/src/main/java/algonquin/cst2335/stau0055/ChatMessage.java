@@ -17,7 +17,7 @@ public class ChatMessage {
 
     @PrimaryKey (autoGenerate = true)
     @ColumnInfo (name="id")
-    public int id;
+    public long id;
 
     public ChatMessage(String message, String timeSent, boolean isSentButton) {
         this.message = message;

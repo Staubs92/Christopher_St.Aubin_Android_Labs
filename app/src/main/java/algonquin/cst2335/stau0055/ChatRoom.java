@@ -180,38 +180,43 @@ public class ChatRoom extends AppCompatActivity {
         {
             case R.id.item_1:
 
-                ChatMessage removedMessage = chatMessage;
+                ChatMessage removedMessage = chatModel.selectedMessage.getValue();
+                int position = messages.indexOf(removedMessage);
 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(ChatRoom.this);
-                builder.setMessage("Do you want to delete this message: " + messageText.getText())
-                        .setTitle("Question:")
-                        .setNegativeButton("No", (dialog, cl) -> {
-                        })
-                        .setPositiveButton("Yes", (dialog, cl) -> {
-                            messages.remove(position);
-                            myAdapter.notifyItemRemoved(position);
+                if (removedMessage != null) {
+                    builder.setMessage("Do you want to delete this message: " + removedMessage.getMessage())
+                            .setTitle("Question:")
+                            .setNegativeButton("No", (dialog, cl) -> {
+                            })
+                            .setPositiveButton("Yes", (dialog, cl) -> {
+                                messages.remove(position);
+                                myAdapter.notifyItemRemoved(position);
 
 
-                            Executor thread1 = Executors.newSingleThreadExecutor();
-                            thread1.execute(() -> {
+                                Executor thread1 = Executors.newSingleThreadExecutor();
+                                thread1.execute(() -> {
 
-                                mDAO.deleteMessage(chatMessage);
+                                    mDAO.deleteMessage(removedMessage);
 
-                            });
+                                });
 
 
-                            Snackbar.make(messageText, "You deleted message #" + position, Snackbar.LENGTH_LONG)
-                                    .setAction("undo", clk2 -> {
-                                        Executor thread2 = Executors.newSingleThreadExecutor();
-                                        thread2.execute(() -> {
-                                            mDAO.insertMessage(removedMessage); });
+                                Snackbar.make(binding.getRoot(), "You deleted message #" + position, Snackbar.LENGTH_LONG)
+                                        .setAction("undo", clk2 -> {
+                                            Executor thread2 = Executors.newSingleThreadExecutor();
+                                            thread2.execute(() -> {
+                                                long id = mDAO.insertMessage(removedMessage);
+                                                removedMessage.id = id;
+                                            });
 
-                                        messages.add(position, removedMessage);
-                                        myAdapter.notifyItemInserted(position);
+                                            messages.add(position, removedMessage);
+                                            myAdapter.notifyItemInserted(position);
 
-                                    }).show();
-                        }).create().show();
+                                        }).show();
+                            }).create().show();
+                }
                 return true;
 
             case R.id.item_2:
