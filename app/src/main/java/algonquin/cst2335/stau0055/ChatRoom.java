@@ -40,6 +40,7 @@ public class ChatRoom extends AppCompatActivity {
     ActivityChatRoomBinding binding;
     ArrayList<ChatMessage> messages;
     ChatRoomModel chatModel ;
+    MessageDetailsFragment chatFragment;
     private RecyclerView.Adapter myAdapter;
     ChatMessageDAO mDAO;
     @Override
@@ -55,7 +56,7 @@ public class ChatRoom extends AppCompatActivity {
 
          chatModel.selectedMessage.observe(this, (newMessageValue) -> {
 
-             MessageDetailsFragment chatFragment = new MessageDetailsFragment(newMessageValue);
+             chatFragment = new MessageDetailsFragment(newMessageValue);
              FragmentManager fMgr = getSupportFragmentManager();
              FragmentTransaction tx = fMgr.beginTransaction();
              tx.addToBackStack("");
@@ -185,7 +186,7 @@ public class ChatRoom extends AppCompatActivity {
 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(ChatRoom.this);
-                if (removedMessage != null) {
+                if (removedMessage != null && chatFragment != null) {
                     builder.setMessage("Do you want to delete this message: " + removedMessage.getMessage())
                             .setTitle("Question:")
                             .setNegativeButton("No", (dialog, cl) -> {
@@ -197,8 +198,9 @@ public class ChatRoom extends AppCompatActivity {
 
                                 Executor thread1 = Executors.newSingleThreadExecutor();
                                 thread1.execute(() -> {
-
+                                    getSupportFragmentManager().beginTransaction().remove(chatFragment).commit();
                                     mDAO.deleteMessage(removedMessage);
+                                    chatFragment = null;
 
                                 });
 
