@@ -2,107 +2,140 @@ package algonquin.cst2335.stau0055;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ImageView;
 
-/**
- * This is the main activity for the password complexity checker app.
- * @author chris
- * @version 1.0
- */
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+
+import algonquin.cst2335.stau0055.databinding.ActivityMainBinding;
+
+
 public class MainActivity extends AppCompatActivity {
 
-    /** This holds the text at the  center of the screen*/
-    TextView tv = null;
+    ActivityMainBinding binding;
+    protected String cityName;
+    RequestQueue queue = null;
 
-    /** This holds the text for the password being entered*/
-    EditText et = null;
-
-    /** This holds content for the login button*/
-    Button btn = null;
+    double latitude;
+    double longitude;
+    String description;
+    String iconName;
+    String name;
+    double currentTemp;
+    double minTemp;
+    double maxTemp;
+    int humidity;
+    int visibility;
+    String imageUrl;
+    Bitmap image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-         tv = findViewById(R.id.textView);
-         et = findViewById(R.id.editTextTextPassword);
-         btn = findViewById(R.id.loginButton);
+        queue = Volley.newRequestQueue(this);
 
-        // Set an onClickListener for the login button
-        btn.setOnClickListener(clk -> {
-            String password = et.getText().toString();
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
 
-            // Check if the password meets complexity requirements and update the TextView accordingly
-            if (checkPasswordComplexity(password)) {
-                tv.setText("Your password meets the requirements");
-            } else {
-                tv.setText("You shall not pass!");
+        setContentView(binding.getRoot());
+
+
+
+      binding.getForecast.setOnClickListener( click -> {
+          cityName = binding.editText.getText().toString();
+          String stringURL = null;
+          try {
+              stringURL = "https://api.openweathermap.org/data/2.5/weather?q="
+                      + URLEncoder.encode(cityName, "UTF-8")
+                      + "&appid=7e943c97096a9784391a981c4d878b22&units=metric";
+          } catch (UnsupportedEncodingException e) {
+              throw new RuntimeException(e);
+          }
+
+          JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, stringURL, null,
+                  (response) -> {
+              try {
+                          JSONObject coord = response.getJSONObject("coord");
+                          JSONArray weatherArray = response.getJSONArray("weather");
+                          JSONObject position0 = weatherArray.getJSONObject(0);
+                          String description = position0.getString("description");
+                          String iconName = position0.getString("icon");
+                          int vis = response.getInt("visibility");
+                          String name = response.getString("name");
+                          JSONObject mainObject = response.getJSONObject("main");
+                          double current = mainObject.getDouble("temp");
+                          double min = mainObject.getDouble("temp_min");
+                          double max = mainObject.getDouble("temp_max");
+                          int humidity = mainObject.getInt("humidity");
+
+                          this.latitude = coord.getDouble("lat");
+                          this.longitude = coord.getDouble("lon");
+                          this.description = description;
+                          this.iconName = iconName;
+                          this.visibility = vis;
+                          this.name = name;
+                          this.currentTemp = current;
+                          this.minTemp = min;
+                          this.maxTemp = max;
+                          this.humidity = humidity;
+
+
+              } catch (JSONException e) {
+                  throw new RuntimeException(e);
+              }
+                  },
+
+                  (error) -> {});
+          queue.add(request);
+      });
+
+      String pathname = getFilesDir() + "/" + iconName + ".png";
+      File file = new File(pathname);
+      if(file.exists()) {
+          image = BitmapFactory.decodeFile(pathname);
+      }
+      else {
+        ImageRequest imgReq = new ImageRequest("https://openweathermap.org/img/w/" + iconName + ".png", new Response.Listener>Bitmap<() {
+            @Override
+            public void onResponse(Bitmap bitmap) {
+                try {
+                    image = bitmap;
+                    image.compress(bitmap.CompressFormat.PNG, 100, ActivityMain.this.openFileOutput(iconName + ".png", Activity.MODE_PRIVATE));
+                } catch (Exception e) {
+                }
             }
-        });
-    }
-    /**
-     * Check the complexity of the provided password.
-     *
-     * @param password The password to be checked.
-     * @return true if the password meets the complexity requirements, false otherwise.
-     */
-    private boolean checkPasswordComplexity(String password) {
-        boolean foundUpperCase, foundLowerCase, foundNumber, foundSpecial;
-        foundUpperCase = foundLowerCase = foundNumber = foundSpecial = false;
+        }, 1024, 1024, ImageView.ScaleType.CENTER, null, (error ) -> {});
+      }
 
-        for (char c : password.toCharArray()) {
-            if (Character.isUpperCase(c)) {
-                foundUpperCase = true;
-            } else if (Character.isLowerCase(c)) {
-                foundLowerCase = true;
-            } else if (Character.isDigit(c)) {
-                foundNumber = true;
-            } else if (isSpecialCharacter(c)) {
-                foundSpecial = true;
-            }
-        }
+        FileOutputStream fOut = null;
+        try {
+            fOut = openFileOutput( iconName + ".png", Context.MODE_PRIVATE);
 
-        if (!foundUpperCase) {
-            Toast.makeText(this, "Must contain at least 1 uppercase letter.", Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (!foundLowerCase) {
-            Toast.makeText(this, "Must contain at least 1 lowercase letter.", Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (!foundNumber) {
-            Toast.makeText(this, "Must contain at least 1 number.", Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (!foundSpecial) {
-            Toast.makeText(this, "Must contain at least 1 special character.", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+            image.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+            fOut.flush();
+            fOut.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
 
-        return true;
-    }
-    /**
-     * Check if a character is a special character.
-     *
-     * @param c The character to be checked.
-     * @return true if the character is a special character, false otherwise.
-     */
-    private boolean isSpecialCharacter(char c) {
-        switch (c) {
-            case '#':
-            case '$':
-            case '%':
-            case '^':
-            case '&':
-            case '*':
-            case '!':
-            case '@':
-            case '?':
-                return true;
-            default:
-                return false;
         }
     }
 }
