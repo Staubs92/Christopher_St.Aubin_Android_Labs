@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.android.volley.Request;
@@ -64,10 +65,15 @@ public class MainActivity extends AppCompatActivity {
                             JSONArray weather = response.getJSONArray("weather");
                             JSONObject data = response.getJSONObject("main");
                             binding.temp.setText("The current temperature is " + data.getString("temp"));
+                            binding.temp.setVisibility(View.VISIBLE);
                             binding.maxTemp.setText("the maximum temperature is " + data.getString("temp_max"));
+                            binding.maxTemp.setVisibility(View.VISIBLE);
                             binding.minTemp.setText("The minimum temperature is " + data.getString("temp_min"));
+                            binding.minTemp.setVisibility(View.VISIBLE);
                             binding.humitidy.setText("The humidity is " + data.getString("humidity") + "%");
+                            binding.humitidy.setVisibility(View.VISIBLE);
                             binding.description.setText(weather.getJSONObject(0).getString("description"));
+                            binding.description.setVisibility(View.VISIBLE);
                             String iconName = weather.getJSONObject(0).getString("icon");
 
                             String imgUrl = "https://openweathermap.org/img/w/" + iconName + ".png";
@@ -83,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                                         binding.icon.setImageBitmap(bitmap);
                                     }
                                 }, 1024, 1024, ImageView.ScaleType.CENTER, null, (error) -> {
-                                    int j = 0;
+
                                 });
                                 queue.add(imgReq);
                             }

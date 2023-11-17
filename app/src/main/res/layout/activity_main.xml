@@ -50,6 +50,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="20dp"
         android:text="Tmp goes here"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@+id/getForecast"
         app:layout_constraintTop_toBottomOf="@+id/getForecast" />
 
@@ -59,6 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:text="Max goes here"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@+id/temp"
         app:layout_constraintTop_toBottomOf="@+id/temp" />
 
@@ -68,6 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:text="Min goes here"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@+id/maxTemp"
         app:layout_constraintTop_toBottomOf="@+id/maxTemp" />
 
@@ -77,6 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:text="Humidity goes here"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@+id/minTemp"
         app:layout_constraintTop_toBottomOf="@+id/minTemp" />
 
@@ -86,6 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:text="description goes here"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@+id/humitidy"
         app:layout_constraintTop_toBottomOf="@+id/humitidy" />
 
