@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
                             String iconName = weather.getJSONObject(0).getString("icon");
 
-                            String imgUrl = "https://openweathermap.org/img/w/" + iconName + ".png";
+                            String imgUrl = "http://openweathermap.org/img/w/" + iconName + ".png";
 
                             String pathname = getFilesDir() + "/" + iconName + ".png";
                             File file = new File(pathname);
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                                         binding.icon.setImageBitmap(bitmap);
                                     }
                                 }, 1024, 1024, ImageView.ScaleType.CENTER, null, (error) -> {
-
+                                    int i = 0;
                                 });
                                 queue.add(imgReq);
                             }
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     },
                     (error) -> {
-
+int i = 0;
                     }
             );
 
