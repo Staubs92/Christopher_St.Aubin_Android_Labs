@@ -64,16 +64,18 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             JSONArray weather = response.getJSONArray("weather");
                             JSONObject data = response.getJSONObject("main");
-                            binding.temp.setText("The current temperature is " + data.getString("temp"));
+
+                            binding.temp.setText("The current temperature is: " + data.getDouble("temp"));
                             binding.temp.setVisibility(View.VISIBLE);
-                            binding.maxTemp.setText("the maximum temperature is " + data.getString("temp_max"));
+                            binding.maxTemp.setText("the maximum temperature is: " + data.getDouble("temp_max"));
                             binding.maxTemp.setVisibility(View.VISIBLE);
-                            binding.minTemp.setText("The minimum temperature is " + data.getString("temp_min"));
+                            binding.minTemp.setText("The minimum temperature is: " + data.getDouble("temp_min"));
                             binding.minTemp.setVisibility(View.VISIBLE);
-                            binding.humitidy.setText("The humidity is " + data.getString("humidity") + "%");
+                            binding.humitidy.setText("The humidity is: " + data.getDouble("humidity") + "%");
                             binding.humitidy.setVisibility(View.VISIBLE);
                             binding.description.setText(weather.getJSONObject(0).getString("description"));
                             binding.description.setVisibility(View.VISIBLE);
+
                             String iconName = weather.getJSONObject(0).getString("icon");
 
                             String imgUrl = "https://openweathermap.org/img/w/" + iconName + ".png";
@@ -98,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     },
                     (error) -> {
-                        int j = 0;
+
                     }
             );
 
